@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IRONPULSE — Smart Physical Training System</title>
+  <meta name="description" content="IRONPULSE is a high-performance smart physical training system. Personalized workout plans, intelligent progress tracking, and interactive training coach.">
+  <meta name="keywords" content="fitness, workout, personal trainer, gym, calisthenics, smart training, IRONPULSE">
+  
+  <!-- Google Fonts: Outfit (Display) & Plus Jakarta Sans (Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Ambient Glow Effects -->
+  <div class="bg-glow-circle bg-glow-1"></div>
+  <div class="bg-glow-circle bg-glow-2"></div>
+  <div class="fitness-grid-lines"></div>
+
+  <!-- Header / Navigation Bar -->
+  <header class="site-header" id="siteHeader">
+    <div class="container nav-container">
+      <a href="#" class="brand-logo" id="brandLogoHome">
+        <img src="assets/logo.png" alt="IRONPULSE" style="height: 38px; width: auto; object-fit: contain;">
+      </a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#hero" class="nav-link active">Home</a></li>
+          <li><a href="#features" class="nav-link">Features</a></li>
+          <li><a href="#howItWorks" class="nav-link">How It Works</a></li>
+          <li><a href="#workouts" class="nav-link">Workouts</a></li>
+          <li><a href="#dashboardSection" class="nav-link" id="navDashboardLink" style="display: none;">My Plan</a></li>
+          <li><a href="#about" class="nav-link">About</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="btn btn-primary" id="navGetStartedBtn">
+          Get Started <i class="fa-solid fa-arrow-right"></i>
+        </button>
+        <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer -->
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+  <aside class="mobile-drawer" id="mobileDrawer">
+    <button class="drawer-close" id="drawerCloseBtn" aria-label="Close menu">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+    <div class="brand-logo">
+      <img src="assets/logo.png" alt="IRONPULSE" style="height: 36px; width: auto; object-fit: contain;">
+    </div>
+    <ul class="mobile-nav-links">
+      <li><a href="#hero" class="mobile-link">Home</a></li>
+      <li><a href="#features" class="mobile-link">Features</a></li>
+      <li><a href="#howItWorks" class="mobile-link">How It Works</a></li>
+      <li><a href="#workouts" class="mobile-link">Workouts</a></li>
+      <li><a href="#dashboardSection" class="mobile-link" id="mobileDashboardLink" style="display:none;">My Dashboard</a></li>
+      <li><a href="#about" class="mobile-link">About</a></li>
+    </ul>
+    <button class="btn btn-primary" id="mobileGetStartedBtn" style="width: 100%;">
+      Start Assessment <i class="fa-solid fa-arrow-right"></i>
+    </button>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main id="mainContent">
+
+    <!-- 1. Landing Hero Section -->
+    <section class="hero-section" id="hero">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <div class="badge badge-primary badge-glow">
+            <i class="fa-solid fa-bolt"></i> Smart Physical Training System
+          </div>
+          <h1 class="hero-title">
+            <span>Train Smarter.</span>
+            <span class="text-gradient">Get Stronger.</span>
+            <span class="text-gradient-blue">Become Your Best.</span>
+          </h1>
+          <p class="hero-subtitle">
+            Your personalized fitness journey starts here. Intelligent workout schedules, form guidance, and adaptive progression tailored entirely to you.
+          </p>
+
+          <div class="hero-actions">
+            <button class="btn btn-primary" id="heroStartBtn">
+              Start Your Fitness Journey <i class="fa-solid fa-arrow-right"></i>
+            </button>
+            <a href="#workouts" class="btn btn-secondary">
+              <i class="fa-solid fa-dumbbell"></i> Explore Workouts
+            </a>
+          </div>
+
+          <div class="hero-metrics">
+            <div class="metric-item">
+              <span class="metric-number">50K+</span>
+              <span class="metric-label">Active Users</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-number">98%</span>
+              <span class="metric-label">Goal Completion</span>
+            </div>
+            <div class="metric-item">
+              <span class="metric-number">100%</span>
+              <span class="metric-label">Frontend Privacy</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="hero-img-wrapper">
+            <img src="assets/hero-fitness.png" alt="IRONPULSE Fitness Athlete Training" id="heroMainImage">
+            <div class="hero-overlay-gradient"></div>
+          </div>
+
+          <!-- Floating Badges -->
+          <div class="floating-badge badge-top-right">
+            <div class="floating-icon icon-fire">
+              <i class="fa-solid fa-fire"></i>
+            </div>
+            <div class="floating-info">
+              <span class="floating-val">850+ kcal</span>
+              <span class="floating-txt">Daily Burn Est.</span>
+            </div>
+          </div>
+
+          <div class="floating-badge badge-bottom-left">
+            <div class="floating-icon icon-heart">
+              <span class="pulse-dot"></span>
+              <i class="fa-solid fa-heart-pulse"></i>
+            </div>
+            <div class="floating-info">
+              <span class="floating-val">138 BPM</span>
+              <span class="floating-txt">Target Heart Zone</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Feature Section (Clean White & Light Design) -->
+    <section class="section-light" id="features">
+      <div class="container">
+        <div class="section-header">
+          <span class="badge badge-primary">Engineered For Results</span>
+          <h2 class="section-title">Everything You Need to Train Better</h2>
+          <p class="section-desc">
+            Equipped with smart algorithms and seamless client-side intelligence, IRONPULSE delivers elite athletic precision to every workout.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          <!-- Card 1 -->
+          <div class="feature-card">
+            <div class="feature-icon-wrapper">
+              <i class="fa-solid fa-dumbbell"></i>
+            </div>
+            <h3 class="feature-title">Personalized Workouts</h3>
+            <p class="feature-text">
+              Workout recommendations based on your goals, push-up capacity, and current fitness level. No cookie-cutter routines.
+            </p>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="feature-card">
+            <div class="feature-icon-wrapper">
+              <i class="fa-solid fa-id-card-clip"></i>
+            </div>
+            <h3 class="feature-title">Smart Fitness Profile</h3>
+            <p class="feature-text">
+              Build your fitness profile using your personal preferences, target muscle groups, and weekly availability.
+            </p>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="feature-card">
+            <div class="feature-icon-wrapper">
+              <i class="fa-solid fa-chart-line"></i>
+            </div>
+            <h3 class="feature-title">Progress Tracking</h3>
+            <p class="feature-text">
+              Track your workout consistency, weekly completion percentages, and training streak right in your browser.
+            </p>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="feature-card">
+            <div class="feature-icon-wrapper">
+              <i class="fa-solid fa-bullseye"></i>
+            </div>
+            <h3 class="feature-title">Goal Based Training</h3>
+            <p class="feature-text">
+              Choose your primary focus—weight loss, muscle building, or athletic stamina—and create a suitable workout journey.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. How It Works Section (Dark Navy Process) -->
+    <section class="section-dark" id="howItWorks">
+      <div class="container">
+        <div class="section-header">
+          <span class="badge badge-primary">Intuitive Methodology</span>
+          <h2 class="section-title">How It Works</h2>
+          <p class="section-desc">
+            From quick onboarding to active workout execution in five frictionless steps.
+          </p>
+        </div>
+
+        <div class="process-stepper">
+          <div class="process-line"></div>
+
+          <div class="process-step">
+            <div class="step-node">01</div>
+            <h3 class="step-title">Tell Us About You</h3>
+            <p class="step-desc">Gender, body dimensions, and activity level.</p>
+          </div>
+
+          <div class="process-step">
+            <div class="step-node">02</div>
+            <h3 class="step-title">Choose Your Goal</h3>
+            <p class="step-desc">Weight loss, muscle hypertrophy, or total fitness.</p>
+          </div>
+
+          <div class="process-step">
+            <div class="step-node">03</div>
+            <h3 class="step-title">Set Your Level</h3>
+            <p class="step-desc">Calibrate intensity via push-up strength benchmark.</p>
+          </div>
+
+          <div class="process-step">
+            <div class="step-node">04</div>
+            <h3 class="step-title">Build Your Plan</h3>
+            <p class="step-desc">Smart synthesizer formulates your custom schedule.</p>
+          </div>
+
+          <div class="process-step">
+            <div class="step-node">05</div>
+            <h3 class="step-title">Start Training</h3>
+            <p class="step-desc">Live interactive timer with rep counting and rest cycles.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Workouts Showcase Section -->
+    <section class="section-dark" id="workouts" style="background: #0b1120; border-top: 1px solid rgba(255,255,255,0.06);">
+      <div class="container">
+        <div class="section-header">
+          <span class="badge badge-primary">Library Preview</span>
+          <h2 class="section-title">Core Movements & Workouts</h2>
+          <p class="section-desc">
+            Sample fundamental compound exercises included in our smart recommendation engine.
+          </p>
+        </div>
+
+        <div class="workout-showcase-grid">
+          <!-- Exercise 1 -->
+          <div class="showcase-card">
+            <img src="assets/exercises/pushups.png" alt="Push-Ups" class="showcase-img">
+            <div class="showcase-body">
+              <div class="badge badge-primary" style="width: fit-content;">Chest • Triceps</div>
+              <h3 class="showcase-title">Standard Push-Ups</h3>
+              <p style="font-size: 0.88rem; color: #94a3b8;">
+                The foundational horizontal pressing movement for upper body hypertrophy and chest development.
+              </p>
+              <div class="showcase-meta">
+                <span><i class="fa-solid fa-repeat"></i> 3 Sets × 5-15 Reps</span>
+                <span style="color: #60a5fa;"><i class="fa-solid fa-gauge-high"></i> Dynamic</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Exercise 2 -->
+          <div class="showcase-card">
+            <img src="assets/exercises/squats.png" alt="Squats" class="showcase-img">
+            <div class="showcase-body">
+              <div class="badge badge-primary" style="width: fit-content;">Legs • Glutes</div>
+              <h3 class="showcase-title">Bodyweight Squats</h3>
+              <p style="font-size: 0.88rem; color: #94a3b8;">
+                Compound lower-body movement building quad strength, knee stability, and metabolic conditioning.
+              </p>
+              <div class="showcase-meta">
+                <span><i class="fa-solid fa-repeat"></i> 3 Sets × 10-20 Reps</span>
+                <span style="color: #60a5fa;"><i class="fa-solid fa-gauge-high"></i> All Levels</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Exercise 3 -->
+          <div class="showcase-card">
+            <img src="assets/exercises/plank.png" alt="Plank" class="showcase-img">
+            <div class="showcase-body">
+              <div class="badge badge-primary" style="width: fit-content;">Core • Abs</div>
+              <h3 class="showcase-title">Isometric Plank Hold</h3>
+              <p style="font-size: 0.88rem; color: #94a3b8;">
+                Rigid core bracing and stabilization to sculpt abdominals and reinforce lumbar support.
+              </p>
+              <div class="showcase-meta">
+                <span><i class="fa-regular fa-clock"></i> 3 Sets × 30-60s</span>
+                <span style="color: #60a5fa;"><i class="fa-solid fa-gauge-high"></i> Core Focus</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Exercise 4 -->
+          <div class="showcase-card">
+            <img src="assets/exercises/lunges.png" alt="Lunges" class="showcase-img">
+            <div class="showcase-body">
+              <div class="badge badge-primary" style="width: fit-content;">Quads • Hamstrings</div>
+              <h3 class="showcase-title">Walking Lunges</h3>
+              <p style="font-size: 0.88rem; color: #94a3b8;">
+                Unilateral lower body power that enhances balance, hip flexibility, and athletic explosiveness.
+              </p>
+              <div class="showcase-meta">
+                <span><i class="fa-solid fa-repeat"></i> 3 Sets × 12 Reps</span>
+                <span style="color: #60a5fa;"><i class="fa-solid fa-gauge-high"></i> Athletic</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Active User Dashboard Section (Dynamically rendered & stored) -->
+    <section class="dashboard-view-section" id="dashboardSection">
+      <div class="container">
+
+        <!-- User Profile Summary Hero Card -->
+        <div class="dashboard-hero-card">
+          <div class="user-profile-header">
+            <div class="user-profile-meta">
+              <div class="user-avatar-box">
+                <img src="assets/male.png" id="dashboardUserAvatar" alt="User Avatar">
+              </div>
+              <div class="user-title-wrap">
+                <div class="badge badge-primary" id="dashboardPlanStatusBadge">Active Plan</div>
+                <h2 id="dashboardGreeting">Welcome Back, Athlete</h2>
+                <div class="user-badges-row" id="dashboardBadgesRow">
+                  <span class="badge" style="background: rgba(255,255,255,0.08); color: #cbd5e1;" id="badgeFocus">Focus: Full Body</span>
+                  <span class="badge" style="background: rgba(255,255,255,0.08); color: #cbd5e1;" id="badgeGoal">Goal: Build Muscle</span>
+                  <span class="badge" style="background: rgba(255,255,255,0.08); color: #cbd5e1;" id="badgeLevel">Level: Beginner</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="dashboard-actions-row">
+              <button class="btn btn-primary" id="dashStartWorkoutBtn">
+                <i class="fa-solid fa-play"></i> Start Workout
+              </button>
+              <button class="btn btn-secondary" id="dashRetakeAssessmentBtn">
+                <i class="fa-solid fa-arrows-rotate"></i> Analyze Again
+              </button>
+              <button class="btn btn-secondary" id="dashFeedbackBtn">
+                <i class="fa-regular fa-comment-dots"></i> Give Feedback
+              </button>
+              <button class="btn btn-secondary" id="dashResetProfileBtn" title="Reset all data">
+                <i class="fa-solid fa-trash-can" style="color:#ef4444;"></i> Reset
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Top Statistics Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fa-solid fa-calendar-check"></i>
+            </div>
+            <div class="stat-content">
+              <span class="stat-val" id="statTrainingDays">3</span>
+              <span class="stat-title">Training Days</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fa-solid fa-dumbbell"></i>
+            </div>
+            <div class="stat-content">
+              <span class="stat-val" id="statTotalExercises">12</span>
+              <span class="stat-title">Exercises</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fa-regular fa-clock"></i>
+            </div>
+            <div class="stat-content">
+              <span class="stat-val" id="statAvgWorkout">45 min</span>
+              <span class="stat-title">Avg Workout</span>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fa-solid fa-chart-pie"></i>
+            </div>
+            <div class="stat-content">
+              <span class="stat-val" id="statConsistency">78%</span>
+              <span class="stat-title">Consistency</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Dashboard Split Grid -->
+        <div class="dashboard-content-grid">
+          
+          <!-- Column 1: Today's Featured Workout -->
+          <div class="featured-workout-card">
+            <div class="featured-workout-banner">
+              <img src="assets/exercises/pushups.png" alt="Today's Workout" id="todayWorkoutImg">
+              <span class="badge badge-primary featured-banner-tag">🔥 Today's Recommended Routine</span>
+              <div class="featured-banner-overlay"></div>
+            </div>
+
+            <div class="featured-workout-body">
+              <div class="featured-workout-header">
+                <div>
+                  <h3 style="font-size: 1.5rem;" id="todayWorkoutTitle">Chest + Arms</h3>
+                  <p style="color: #94a3b8; font-size: 0.9rem;" id="todayWorkoutFocus">Focus: Upper Body Pushing & Core Stabilization</p>
+                </div>
+                <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399;" id="todayWorkoutLevel">Beginner</span>
+              </div>
+
+              <div class="exercise-mini-list" id="todayExercisesList">
+                <!-- Dynamically injected -->
+              </div>
+
+              <div style="display: flex; gap: 14px; align-items: center; justify-content: space-between; margin-top: 10px;">
+                <div style="font-size: 0.9rem; color: #94a3b8;">
+                  <i class="fa-regular fa-clock"></i> Est. Duration: <strong>35 mins</strong>
+                </div>
+                <button class="btn btn-primary" id="todayStartActionBtn">
+                  START WORKOUT →
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2: Weekly Schedule & Progress Widgets -->
+          <div style="display: flex; flex-direction: column; gap: 24px;">
+            
+            <!-- Weekly Schedule Widget -->
+            <div class="weekly-schedule-card">
+              <div class="card-heading-row">
+                <h3 style="font-size: 1.25rem;">Weekly Schedule</h3>
+                <span class="badge badge-primary" id="scheduleWeekStatus">Starting Monday</span>
+              </div>
+
+              <div class="schedule-list" id="weeklyScheduleContainer">
+                <!-- Dynamically populated from JavaScript -->
+              </div>
+            </div>
+
+            <!-- Progress Section Widgets -->
+            <div class="progress-card-grid" style="margin-top: 0;">
+              <!-- Streak -->
+              <div class="progress-widget">
+                <div class="progress-widget-header">
+                  <span style="font-size: 0.88rem; color: #94a3b8; font-weight: 600;">TRAINING STREAK</span>
+                  <i class="fa-solid fa-fire" style="color: #f97316;"></i>
+                </div>
+                <div class="streak-counter">
+                  <span class="streak-flame">🔥</span>
+                  <span class="streak-val" id="streakCounterVal">5</span>
+                  <span style="color: #94a3b8; font-size: 0.95rem; font-weight: 600;">Days</span>
+                </div>
+                <p style="font-size: 0.8rem; color: #94a3b8;">Keep the momentum alive!</p>
+              </div>
+
+              <!-- Completed Workouts -->
+              <div class="progress-widget">
+                <div class="progress-widget-header">
+                  <span style="font-size: 0.88rem; color: #94a3b8; font-weight: 600;">COMPLETED</span>
+                  <span style="font-weight: 700; color: #60a5fa;" id="completedRatioText">8 / 12</span>
+                </div>
+                <div class="horizontal-progress-bar">
+                  <div class="horizontal-progress-fill" id="completedProgressBar" style="width: 66%;"></div>
+                </div>
+                <p style="font-size: 0.8rem; color: #94a3b8;">66% of monthly objective reached</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Weekly Plan Detail Cards Section -->
+        <div style="margin-top: 50px;">
+          <div class="card-heading-row">
+            <div>
+              <h2 style="font-size: 1.8rem;">Your Recommended Routine</h2>
+              <p style="color: #94a3b8; font-size: 0.95rem;">Tailored exercise breakdowns for each training day.</p>
+            </div>
+            <button class="btn btn-secondary" id="toggleAllDaysBtn">
+              <i class="fa-solid fa-list-check"></i> View All Days
+            </button>
+          </div>
+
+          <div class="recommended-cards-grid" id="recommendedRoutinesGrid">
+            <!-- Dynamically populated cards for Monday, Wednesday, Friday, etc. -->
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 6. About Section -->
+    <section class="section-light" id="about">
+      <div class="container">
+        <div class="section-header">
+          <span class="badge badge-primary">Smart Calisthenics & Strength</span>
+          <h2 class="section-title">Engineered for Maximum Efficiency</h2>
+          <p class="section-desc">
+            IRONPULSE operates 100% on the client side with zero intrusive servers or tracking databases. Your personal biometric details and progress stay on your device.
+          </p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+          <div class="feature-card">
+            <h3 class="feature-title"><i class="fa-solid fa-lock" style="color:#2563eb; margin-right:8px;"></i> Zero Cloud Leakage</h3>
+            <p class="feature-text">Your fitness metrics, uploaded images, and routine preferences are saved purely in browser LocalStorage.</p>
+          </div>
+          <div class="feature-card">
+            <h3 class="feature-title"><i class="fa-solid fa-bolt" style="color:#2563eb; margin-right:8px;"></i> Instant Personalization</h3>
+            <p class="feature-text">Algorithmic calibration automatically determines your exercise rep ranges, rest intervals, and weekly distribution.</p>
+          </div>
+          <div class="feature-card">
+            <h3 class="feature-title"><i class="fa-solid fa-stopwatch" style="color:#2563eb; margin-right:8px;"></i> Built-In Smart Timer</h3>
+            <p class="feature-text">Integrated high-precision workout clock with acoustic interval indicators and automatic set progression.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================================================
+       MODAL 1: Interactive Onboarding Assessment (Steps 1 to 9)
+       ========================================================================== -->
+  <div class="modal-overlay" id="assessmentModal">
+    <div class="assessment-modal-card">
+      
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="modal-nav-bar">
+          <span class="modal-step-badge" id="modalStepCounter">Step 1 of 9</span>
+          <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close Assessment">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="modal-progress-container">
+          <div class="modal-progress-bar" id="modalProgressBar"></div>
+        </div>
+      </div>
+
+      <!-- Modal Body (Steps Container) -->
+      <div class="modal-body">
+        
+        <!-- STEP 1: Gender Selection -->
+        <div class="assessment-step" id="step1" data-step="1">
+          <div class="step-heading-wrap">
+            <h2 class="step-main-heading">What's your gender?</h2>
+            <p class="step-subtitle">Let us know you better to calculate baseline calorie and body metrics.</p>
+          </div>
+
+          <div class="selection-grid-2">
+            <!-- Male Card -->
+            <div class="select-card gender-card" data-val="Male" id="genderCardMale">
+              <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+              <div class="gender-avatar-wrap">
+                <img src="assets/male.png" alt="Male Fitness Model">
+              </div>
+              <span class="gender-label">Male</span>
+            </div>
+
+            <!-- Female Card -->
+            <div class="select-card gender-card" data-val="Female" id="genderCardFemale">
+              <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+              <div class="gender-avatar-wrap">
+                <img src="assets/female.png" alt="Female Fitness Model">
+              </div>
+              <span class="gender-label">Female</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: Focus Area (Multi-select) -->
+        <div class="assessment-step" id="step2" data-step="2" style="display: none;">
+          <div class="step-heading-wrap">
+            <h2 class="step-main-heading">Which areas do you want to focus on?</h2>
+            <p class="step-subtitle">Choose one or more target muscle groups</p>
+          </div>
+
+          <div class="selection-grid-wrap">
+            <div class="select-card multi-card" data-val="Full Body">
+              <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+              <div class="icon-card-icon"><i class="fa-solid fa-person"></i></div>
+              <span class="card-title-lg">Full Body</span>
+              <span class="card-desc-sm">Balanced conditioning</span>
+            </div>
+
+            <div class="select-card multi-card" data-val="Arms">
+              <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+              <div class="icon-card-icon"><i class="fa-solid fa-hand-fist"></i></div>
+              <span class="card-title-lg">Arms</span>
+              <span class="card-desc-sm">Biceps & Triceps</span>
+            </div>
+
+            <div class="select-card multi-card" data-val="Chest">
+              <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+              <div class="icon-card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+              <span class="card-title-lg">Chest</span>
+              <span class="card-desc-sm">Pectorals & Strength</span>
+            </div>
+
+            <div class="select-card multi-card" data-val="Abs">
+              <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+              <div class="icon-card-icon"><i class="fa-solid fa-cubes-stacked"></i></div>
+              <span class="card-title-lg">Abs</span>
+              <span class="card-desc-sm">Core stability</span>
+            </div>
+
+            <div class="select-card multi-card" data-val="Legs">
+              <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+              <div class="icon-card-icon"><i class="fa-solid fa-person-running"></i></div>
+              <span class="card-title-lg">Legs</span>
+              <span class="card-desc-sm">Quads & Glutes</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: Fitness Goals (Multi-select) -->
+        <div class="assessment-step" id="step3" data-step="3" style="display: none;">
+          <div class="step-heading-wrap">
+            <h2 class="step-main-heading">What are your main goals?</h2>
+            <p class="step-subtitle">Select all that apply to your transformation path</p>
+          </div>
+
+          <div class="selection-grid-3">
+            <div class="select-card multi-card" data-val="Lose Weight">
+              <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+              <div class="icon-card-icon"><i class="fa-solid fa-fire-flame-curved"></i></div>
+              <span class="card-title-lg">Lose Weight</span>
+              <span class="card-desc-sm">Burn calories & fat</span>
+            </div>
+
+            <div class="select-card multi-card" data-val="Build Muscle">
+              <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+              <div class="icon-card-icon"><i class="fa-solid fa-dumbbell"></i></div>
+              <span class="card-title-lg">Build Muscle</span>
+              <span class="card-desc-sm">Hypertrophy & power</span>
+            </div>
+
+            <div class="select-card multi-card" data-val="Keep Fit">
+              <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+              <div class="icon-card-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+              <span class="card-title-lg">Keep Fit</span>
+              <span class="card-desc-sm">Endurance & health</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4: Motivation (Multi-select) -->
+        <div class="assessment-step" id="step4" data-step="4" style="display: none;">
+          <div class="step-heading-wrap">
+            <h2 class="step-main-heading">What motivates you the most?</h2>
+            <p class="step-subtitle">Fuel your determination with your personal 'why'</p>
+          </div>
+
+          <div class="selection-grid-wrap">
+            <div class="select-card multi-card" data-val="Feel Confident">
+              <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+              <div class="icon-card-icon"><i class="fa-solid fa-crown"></i></div>
+              <span class="card-title-lg">Feel Confident</span>
+              <span class="card-desc-sm">Pride & self-esteem</span>
+            </div>
+
+            <div class="select-card multi-card" data-val="Release Stress">
+              <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+              <div class="icon-card-icon"><i class="fa-solid fa-spa"></i></div>
+              <span class="card-title-lg">Release Stress</span>
+              <span class="card-desc-sm">Mental clarity & relief</span>
+            </div>
+
+            <div class="select-card multi-card" data-val="Improve Health">
+              <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+              <div class="icon-card-icon"><i class="fa-solid fa-notes-medical"></i></div>
+              <span class="card-title-lg">Improve Health</span>
+              <span class="card-desc-sm">Longevity & vitality</span>
+            </div>
+
+            <div class="select-card multi-card" data-val="Boost Energy">
+              <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+              <div class="icon-card-icon"><i class="fa-solid fa-bolt"></i></div>
+              <span class="card-title-lg">Boost Energy</span>
+              <span class="card-desc-sm">All-day athletic drive</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 5: Push-Up Level (Single Select) -->
+        <div class="assessment-step" id="step5" data-step="5" style="display: none;">
+          <div class="step-heading-wrap">
+            <h2 class="step-main-heading">How many push-ups can you do at one time?</h2>
+            <p class="step-subtitle">We calibrate workout load based on your baseline strength</p>
+          </div>
+
+          <div class="selection-grid-3">
+            <div class="select-card single-card" data-val="Beginner">
+              <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+              <div class="icon-card-icon"><i class="fa-solid fa-seedling"></i></div>
+              <span class="card-title-lg">Beginner</span>
+              <span class="card-desc-sm">3–5 Push-ups</span>
+              <div class="difficulty-bars">
+                <span class="diff-bar active"></span>
+                <span class="diff-bar"></span>
+                <span class="diff-bar"></span>
+              </div>
+            </div>
+
+            <div class="select-card single-card" data-val="Intermediate">
+              <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+              <div class="icon-card-icon"><i class="fa-solid fa-dumbbell"></i></div>
+              <span class="card-title-lg">Intermediate</span>
+              <span class="card-desc-sm">5–10 Push-ups</span>
+              <div class="difficulty-bars">
+                <span class="diff-bar active"></span>
+                <span class="diff-bar active"></span>
+                <span class="diff-bar"></span>
+              </div>
+            </div>
+
+            <div class="select-card single-card" data-val="Advanced">
+              <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+              <div class="icon-card-icon"><i class="fa-solid fa-trophy"></i></div>
+              <span class="card-title-lg">Advanced</span>
+              <span class="card-desc-sm">10+ Push-ups</span>
+              <div class="difficulty-bars">
+                <span class="diff-bar active"></span>
+                <span class="diff-bar active"></span>
+                <span class="diff-bar active"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 6: Activity Level (Single Select) -->
+        <div class="assessment-step" id="step6" data-step="6" style="display: none;">
+          <div class="step-heading-wrap">
+            <h2 class="step-main-heading">What's your activity level?</h2>
+            <p class="step-subtitle">Current daily movement outside structured workouts</p>
+          </div>
+
+          <div class="selection-grid-2">
+            <div class="select-card single-card" data-val="Sedentary">
+              <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+              <div class="icon-card-icon"><i class="fa-solid fa-couch"></i></div>
+              <span class="card-title-lg">Sedentary</span>
+              <span class="card-desc-sm">Little to no regular exercise</span>
+            </div>
+
+            <div class="select-card single-card" data-val="Lightly Active">
+              <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+              <div class="icon-card-icon"><i class="fa-solid fa-shoe-prints"></i></div>
+              <span class="card-title-lg">Lightly Active</span>
+              <span class="card-desc-sm">Occasional walking or light activity</span>
+            </div>
+
+            <div class="select-card single-card" data-val="Moderately Active">
+              <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+              <div class="icon-card-icon"><i class="fa-solid fa-person-walking"></i></div>
+              <span class="card-title-lg">Moderately Active</span>
+              <span class="card-desc-sm">Regular exercise 3-4 days/week</span>
+            </div>
+
+            <div class="select-card single-card" data-val="Very Active">
+              <div class="check-indicator"><i class="fa-solid fa-check"></i></div>
+              <div class="icon-card-icon"><i class="fa-solid fa-fire"></i></div>
+              <span class="card-title-lg">Very Active</span>
+              <span class="card-desc-sm">Intense sports or hard physical training</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 7: Weekly Training Goal (Number + Day Selector) -->
+        <div class="assessment-step" id="step7" data-step="7" style="display: none;">
+          <div class="step-heading-wrap">
+            <h2 class="step-main-heading">Set your weekly training goal</h2>
+            <p class="step-subtitle">How many days do you want to train?</p>
+          </div>
+
+          <div class="days-count-display" id="daysCountDisplay">3 DAYS / WEEK</div>
+
+          <div class="days-number-selector">
+            <button class="day-num-btn" data-days="1">1</button>
+            <button class="day-num-btn" data-days="2">2</button>
+            <button class="day-num-btn active" data-days="3">3</button>
+            <button class="day-num-btn" data-days="4">4</button>
+            <button class="day-num-btn" data-days="5">5</button>
+            <button class="day-num-btn" data-days="6">6</button>
+            <button class="day-num-btn" data-days="7">7</button>
+          </div>
+
+          <div style="margin-top: 30px; text-align: center;">
+            <p style="font-weight: 700; margin-bottom: 12px; color: #cbd5e1;">Choose your starting day</p>
+            <div class="start-days-wrap">
+              <button class="start-day-pill" data-day="Sunday">Sunday</button>
+              <button class="start-day-pill active" data-day="Monday">Monday</button>
+              <button class="start-day-pill" data-day="Tuesday">Tuesday</button>
+              <button class="start-day-pill" data-day="Wednesday">Wednesday</button>
+              <button class="start-day-pill" data-day="Thursday">Thursday</button>
+              <button class="start-day-pill" data-day="Friday">Friday</button>
+              <button class="start-day-pill" data-day="Saturday">Saturday</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 8: Body Details (Inputs with Unit Toggles & Validation) -->
+        <div class="assessment-step" id="step8" data-step="8" style="display: none;">
+          <div class="step-heading-wrap">
+            <h2 class="step-main-heading">Tell us a little more about you</h2>
+            <p class="step-subtitle">This helps us personalize your workout experience & calculate stats.</p>
+          </div>
+
+          <div class="body-inputs-grid">
+            <!-- Weight Card -->
+            <div class="input-card">
+              <div class="input-card-header">
+                <span class="input-card-label"><i class="fa-solid fa-weight-scale" style="color: #60a5fa; margin-right: 6px;"></i> Weight</span>
+                <div class="unit-toggle" id="weightUnitToggle">
+                  <span class="unit-btn active" data-unit="KG">KG</span>
+                  <span class="unit-btn" data-unit="LBS">LBS</span>
+                </div>
+              </div>
+              <div class="input-wrapper">
+                <input type="number" id="weightInput" class="styled-input" placeholder="Enter your weight (e.g. 68)" min="20" max="300">
+                <span class="error-text" id="weightError">Please enter a valid weight (30-250 kg)</span>
+              </div>
+            </div>
+
+            <!-- Height Card -->
+            <div class="input-card">
+              <div class="input-card-header">
+                <span class="input-card-label"><i class="fa-solid fa-ruler-vertical" style="color: #60a5fa; margin-right: 6px;"></i> Height</span>
+                <div class="unit-toggle" id="heightUnitToggle">
+                  <span class="unit-btn active" data-unit="CM">CM</span>
+                  <span class="unit-btn" data-unit="FT">FT-IN</span>
+                </div>
+              </div>
+              <div class="input-wrapper">
+                <input type="number" id="heightInput" class="styled-input" placeholder="Enter your height (e.g. 175)" min="80" max="250">
+                <span class="error-text" id="heightError">Please enter a valid height (100-240 cm)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 9: Optional Body Image Upload -->
+        <div class="assessment-step" id="step9" data-step="9" style="display: none;">
+          <div class="step-heading-wrap">
+            <h2 class="step-main-heading">Add a workout image</h2>
+            <p class="step-subtitle">Optional — upload an image for a more personalized fitness experience.</p>
+          </div>
+
+          <div class="dropzone-area" id="dropzoneArea">
+            <input type="file" id="imageFileInput" accept="image/png, image/jpeg, image/jpg" style="display: none;">
+            <div class="dropzone-default-ui" id="dropzoneDefaultUI">
+              <div class="dropzone-icon">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+              </div>
+              <div>
+                <p style="font-weight: 700; font-size: 1.1rem;">Drag &amp; Drop your image here</p>
+                <p style="font-size: 0.88rem; color: #94a3b8; margin-top: 4px;">or <span style="color: #60a5fa; text-decoration: underline;">Browse Files</span></p>
+              </div>
+              <span class="badge" style="background: rgba(255,255,255,0.06); font-size: 0.75rem;">Supported: JPG, JPEG, PNG</span>
+            </div>
+
+            <div class="dropzone-preview-container" id="dropzonePreviewContainer">
+              <div class="preview-img-box">
+                <img src="" id="uploadedImgPreview" alt="Body Preview">
+              </div>
+              <button class="btn btn-secondary" id="removeImageBtn" style="padding: 6px 16px; font-size: 0.85rem;">
+                <i class="fa-solid fa-trash-can"></i> Remove Image
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="stepPrevBtn" style="visibility: hidden;">
+          <i class="fa-solid fa-arrow-left"></i> BACK
+        </button>
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <button class="btn btn-secondary" id="stepSkipBtn" style="display: none;">
+            Skip for now
+          </button>
+          <button class="btn btn-primary" id="stepNextBtn">
+            NEXT <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 2: Fitness Analysis Screen (Step 15 Simulation)
+       ========================================================================== -->
+  <div class="analysis-overlay" id="analysisOverlay">
+    <div class="analysis-container">
+      <div class="badge badge-primary">
+        <i class="fa-solid fa-gear fa-spin"></i> Algorithmic Synthesis
+      </div>
+      <h2 style="font-size: 2.2rem; font-weight: 800;">Building Your Fitness Plan...</h2>
+      
+      <!-- Circular Progress -->
+      <div class="circular-progress-box">
+        <svg class="circular-svg">
+          <circle class="circular-bg" cx="85" cy="85" r="70"></circle>
+          <circle class="circular-meter" id="analysisCircleMeter" cx="85" cy="85" r="70"></circle>
+        </svg>
+        <div class="circular-value" id="analysisPercentText">0%</div>
+      </div>
+
+      <!-- Animated Step Checklist -->
+      <div class="analysis-steps-list">
+        <div class="analysis-step-item" id="analysisStep1">
+          <div class="step-check-icon"><i class="fa-solid fa-check"></i></div>
+          <span style="font-weight: 600;">Understanding your goals</span>
+        </div>
+        <div class="analysis-step-item" id="analysisStep2">
+          <div class="step-check-icon"><i class="fa-solid fa-check"></i></div>
+          <span style="font-weight: 600;">Reviewing your fitness level</span>
+        </div>
+        <div class="analysis-step-item" id="analysisStep3">
+          <div class="step-check-icon"><i class="fa-solid fa-check"></i></div>
+          <span style="font-weight: 600;">Selecting suitable exercises</span>
+        </div>
+        <div class="analysis-step-item" id="analysisStep4">
+          <div class="step-check-icon"><i class="fa-solid fa-check"></i></div>
+          <span style="font-weight: 600;">Creating your weekly plan</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 3: Workout Player & Live Timer (Step 19)
+       ========================================================================== -->
+  <div class="player-modal-overlay" id="playerModal">
+    <div class="player-card">
+      <div class="player-media-header">
+        <button class="player-close-btn" id="playerCloseBtn" aria-label="Close Workout">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+        <img src="assets/exercises/pushups.png" alt="Current Exercise" id="playerExerciseImg">
+        <div class="player-media-overlay"></div>
+      </div>
+
+      <div class="player-body">
+        <div class="player-tags-row">
+          <span class="badge badge-primary" id="playerExerciseIndex">Exercise 1 of 3</span>
+          <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399;" id="playerDifficultyBadge">Beginner</span>
+        </div>
+
+        <div>
+          <h2 style="font-size: 2rem;" id="playerExerciseTitle">Push-Ups</h2>
+          <p style="color: #60a5fa; font-weight: 700; font-size: 1.15rem;" id="playerSetsReps">3 Sets × 5 Reps</p>
+        </div>
+
+        <div class="player-timer-display" id="playerTimerDisplay">01:00</div>
+        <span class="player-status-badge" id="playerTimerMode">WORK INTERVAL</span>
+
+        <p class="player-instructions" id="playerInstructionsText">
+          Keep your body aligned and perform each repetition with controlled movement. Inhale going down, exhale pressing up.
+        </p>
+
+        <div class="player-controls-row">
+          <button class="btn btn-secondary" id="playerResetTimerBtn" title="Reset Timer">
+            <i class="fa-solid fa-rotate-left"></i>
+          </button>
+          <button class="btn btn-primary" id="playerToggleTimerBtn" style="min-width: 140px;">
+            <i class="fa-solid fa-play"></i> START
+          </button>
+          <button class="btn btn-secondary" id="playerNextExerciseBtn">
+            NEXT EXERCISE <i class="fa-solid fa-forward"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 4: Feedback Page / Screen (Step 20)
+       ========================================================================== -->
+  <div class="feedback-modal-overlay" id="feedbackModal">
+    <div class="feedback-card">
+      <button class="modal-close-btn" id="feedbackCloseBtn" style="position: absolute; top: 18px; right: 18px;">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <!-- Interactive Form View -->
+      <div id="feedbackFormView">
+        <span class="badge badge-primary" style="margin-bottom: 8px;">Session Review</span>
+        <h2 style="font-size: 1.8rem; font-weight: 800;">How was your workout plan?</h2>
+        <p style="color: #94a3b8; font-size: 0.92rem;">Rate your experience and help us calibrate your routine</p>
+
+        <!-- Star Rating -->
+        <div style="margin: 20px 0;">
+          <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 8px; font-weight: 600;">RATE YOUR EXPERIENCE</p>
+          <div class="star-rating-row" id="starRatingRow">
+            <i class="fa-solid fa-star star-icon active" data-rating="1"></i>
+            <i class="fa-solid fa-star star-icon active" data-rating="2"></i>
+            <i class="fa-solid fa-star star-icon active" data-rating="3"></i>
+            <i class="fa-solid fa-star star-icon active" data-rating="4"></i>
+            <i class="fa-solid fa-star star-icon active" data-rating="5"></i>
+          </div>
+        </div>
+
+        <!-- Suitability Question -->
+        <div style="margin-bottom: 20px;">
+          <p style="font-size: 0.88rem; color: #cbd5e1; margin-bottom: 10px; font-weight: 600;">
+            Was this workout suitable for you?
+          </p>
+          <div class="suitability-buttons-row">
+            <button class="suit-btn active" id="suitYesBtn">YES</button>
+            <button class="suit-btn" id="suitNoBtn">NO</button>
+          </div>
+        </div>
+
+        <!-- Textarea -->
+        <div style="text-align: left; margin-bottom: 20px;">
+          <label style="display: block; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 6px; font-weight: 600;">
+            What would you like to improve?
+          </label>
+          <textarea id="feedbackCommentInput" class="feedback-textarea" placeholder="Tell us if the exercises were too easy, difficult, or if you prefer certain body parts..."></textarea>
+        </div>
+
+        <button class="btn btn-primary" id="submitFeedbackBtn" style="width: 100%;">
+          SUBMIT FEEDBACK <i class="fa-solid fa-paper-plane"></i>
+        </button>
+      </div>
+
+      <!-- Success State View -->
+      <div class="feedback-success-box" id="feedbackSuccessBox">
+        <div class="success-check-bubble">
+          <i class="fa-solid fa-check"></i>
+        </div>
+        <h2 style="font-size: 2rem;">Thank You!</h2>
+        <p style="color: #94a3b8; font-size: 1rem; max-width: 380px;">
+          Your feedback helps improve your fitness experience. Your preferences have been saved locally.
+        </p>
+        <button class="btn btn-primary" id="feedbackDoneBtn" style="margin-top: 15px;">
+          Go to Final Dashboard <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand-info">
+          <div class="brand-logo">
+            <img src="assets/logo.png" alt="IRONPULSE" style="height: 36px; width: auto; object-fit: contain;">
+          </div>
+          <p class="footer-desc">
+            Train Smarter. Get Stronger. Live Better. A modern, frontend-only physical training system built with pure client-side precision.
+          </p>
+          <div style="display: flex; gap: 14px; margin-top: 6px; font-size: 1.2rem; color: #94a3b8;">
+            <a href="#" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+            <a href="#" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Navigation</h4>
+          <ul class="footer-links">
+            <li><a href="#hero">Home</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#howItWorks">How It Works</a></li>
+            <li><a href="#workouts">Workouts</a></li>
+            <li><a href="#about">About</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Programs</h4>
+          <ul class="footer-links">
+            <li><a href="#assessmentModal" id="footerLinkFullBody">Full Body Calisthenics</a></li>
+            <li><a href="#assessmentModal" id="footerLinkHypertrophy">Upper Body Hypertrophy</a></li>
+            <li><a href="#assessmentModal" id="footerLinkLegs">Leg & Core Stamina</a></li>
+            <li><a href="#assessmentModal" id="footerLinkWeightLoss">Metabolic Conditioning</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">System Specs</h4>
+          <ul class="footer-links">
+            <li><span><i class="fa-solid fa-circle-check" style="color:#10b981;"></i> HTML5 + CSS3 + Vanilla JS</span></li>
+            <li><span><i class="fa-solid fa-circle-check" style="color:#10b981;"></i> 100% Frontend Architecture</span></li>
+            <li><span><i class="fa-solid fa-circle-check" style="color:#10b981;"></i> LocalStorage Persistence</span></li>
+            <li><span><i class="fa-solid fa-circle-check" style="color:#10b981;"></i> Web Audio API Synthesizer</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2026 IRONPULSE. All rights reserved. Smart Physical Training System.</p>
+        <p style="color: #64748b;">Designed for elite performance & responsive modern web demonstration.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Core JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>
