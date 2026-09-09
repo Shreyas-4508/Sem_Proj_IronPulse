@@ -44,6 +44,9 @@
       </nav>
 
       <div class="nav-actions">
+        <button class="btn btn-secondary" id="navAuthBtn" style="padding: 10px 16px; font-size: 0.9rem;">
+          <i class="fa-solid fa-user"></i> <span id="navAuthBtnText">Account</span>
+        </button>
         <button class="btn btn-primary" id="navGetStartedBtn">
           Get Started <i class="fa-solid fa-arrow-right"></i>
         </button>
@@ -73,6 +76,9 @@
       <li><a href="#dashboardSection" class="mobile-link" id="mobileDashboardLink" style="display:none;">My Dashboard</a></li>
       <li><a href="#about" class="mobile-link">About</a></li>
     </ul>
+    <button class="btn btn-secondary" id="mobileAuthBtn" style="width: 100%; margin-bottom: 10px;">
+      <i class="fa-solid fa-user"></i> <span id="mobileAuthBtnText">Account / Login</span>
+    </button>
     <button class="btn btn-primary" id="mobileGetStartedBtn" style="width: 100%;">
       Start Assessment <i class="fa-solid fa-arrow-right"></i>
     </button>
@@ -1076,6 +1082,90 @@
         </button>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Auth Modal (Login / Sign Up / PostgreSQL Sync) -->
+  <div class="modal-overlay" id="authModal">
+    <div class="assessment-modal-card" style="max-width: 440px;">
+      <div class="modal-header" style="padding: 20px 24px 14px;">
+        <div class="modal-nav-bar">
+          <div class="modal-step-badge" id="authModalTitle">
+            <i class="fa-solid fa-shield-halved"></i> IRONPULSE ACCOUNT
+          </div>
+          <button class="modal-close-btn" id="authModalCloseBtn" aria-label="Close Auth Modal">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+
+      <div style="padding: 24px;">
+        <!-- Auth Tabs (when not logged in) -->
+        <div id="authUnauthenticatedView">
+          <div style="display: flex; background: rgba(255, 255, 255, 0.05); border-radius: 10px; padding: 4px; margin-bottom: 20px;">
+            <button id="authTabLogin" class="btn" style="flex: 1; padding: 8px 12px; font-size: 0.9rem; background: var(--blue-600); color: #fff; border-radius: 8px;">Login</button>
+            <button id="authTabSignup" class="btn" style="flex: 1; padding: 8px 12px; font-size: 0.9rem; background: transparent; color: #94a3b8; border-radius: 8px;">Sign Up</button>
+          </div>
+
+          <!-- Login Form -->
+          <form id="authLoginForm" style="display: flex; flex-direction: column; gap: 14px;">
+            <div>
+              <label style="display: block; font-size: 0.82rem; color: #cbd5e1; margin-bottom: 5px; font-weight: 600;">Email Address</label>
+              <input type="email" id="loginEmailInput" required placeholder="athlete@example.com" class="feedback-textarea" style="height: 44px; resize: none; padding: 10px 14px;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.82rem; color: #cbd5e1; margin-bottom: 5px; font-weight: 600;">Password</label>
+              <input type="password" id="loginPasswordInput" required placeholder="••••••••" class="feedback-textarea" style="height: 44px; resize: none; padding: 10px 14px;">
+            </div>
+            <div id="loginErrorMsg" style="color: #ef4444; font-size: 0.85rem; display: none;"></div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 6px;">
+              LOG IN <i class="fa-solid fa-right-to-bracket"></i>
+            </button>
+          </form>
+
+          <!-- Signup Form -->
+          <form id="authSignupForm" style="display: none; flex-direction: column; gap: 14px;">
+            <div>
+              <label style="display: block; font-size: 0.82rem; color: #cbd5e1; margin-bottom: 5px; font-weight: 600;">Full Name</label>
+              <input type="text" id="signupNameInput" placeholder="Alex Mercer" class="feedback-textarea" style="height: 44px; resize: none; padding: 10px 14px;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.82rem; color: #cbd5e1; margin-bottom: 5px; font-weight: 600;">Email Address</label>
+              <input type="email" id="signupEmailInput" required placeholder="athlete@example.com" class="feedback-textarea" style="height: 44px; resize: none; padding: 10px 14px;">
+            </div>
+            <div>
+              <label style="display: block; font-size: 0.82rem; color: #cbd5e1; margin-bottom: 5px; font-weight: 600;">Password (min 6 chars)</label>
+              <input type="password" id="signupPasswordInput" required minlength="6" placeholder="••••••••" class="feedback-textarea" style="height: 44px; resize: none; padding: 10px 14px;">
+            </div>
+            <div id="signupErrorMsg" style="color: #ef4444; font-size: 0.85rem; display: none;"></div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 6px;">
+              CREATE ACCOUNT <i class="fa-solid fa-user-plus"></i>
+            </button>
+          </form>
+        </div>
+
+        <!-- Logged-in View -->
+        <div id="authAuthenticatedView" style="display: none; text-align: center;">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #2563eb, #38bdf8); display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; font-size: 1.6rem; color: #fff;">
+            <i class="fa-solid fa-user-check"></i>
+          </div>
+          <h3 id="authUserName" style="font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 4px;">Athlete</h3>
+          <p id="authUserEmail" style="color: #94a3b8; font-size: 0.88rem; margin-bottom: 16px;">athlete@example.com</p>
+
+          <div style="background: rgba(37, 99, 235, 0.1); border: 1px solid rgba(37, 99, 235, 0.3); border-radius: 10px; padding: 12px; margin-bottom: 18px; font-size: 0.82rem; color: #93c5fd; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <i class="fa-solid fa-database"></i> PostgreSQL Cloud Sync Active
+          </div>
+
+          <div style="display: flex; gap: 10px;">
+            <button id="authSyncBtn" class="btn btn-secondary" style="flex: 1; font-size: 0.85rem;">
+              <i class="fa-solid fa-rotate"></i> Sync Profile
+            </button>
+            <button id="authLogoutBtn" class="btn" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 10px; padding: 10px 14px; font-size: 0.85rem; font-weight: 600;">
+              <i class="fa-solid fa-right-from-bracket"></i> Log Out
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

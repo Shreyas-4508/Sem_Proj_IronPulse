@@ -1,16 +1,20 @@
 /**
  * IRONPULSE - Smart Physical Training System
- * Pure Frontend Architecture (Vanilla JS)
- * No Backend / No External API Dependencies
+ * Full-Stack Client (Vanilla JS + Express/PostgreSQL Backend Integration)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
   'use strict';
 
   // =========================================================================
-  // 1. Initial State & Storage Management
+  // 1. Initial State, Storage & Backend API Client
   // =========================================================================
   const STORAGE_KEY = 'ironpulse_athlete_profile';
+  const TOKEN_KEY = 'ironpulse_jwt_token';
+  const USER_KEY = 'ironpulse_user_info';
+  const API_BASE = window.location.port === '5000' || window.location.pathname.startsWith('/api')
+    ? '/api'
+    : 'http://localhost:5000/api';
 
   const defaultProfile = {
     gender: 'Male',
@@ -53,6 +57,152 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(athleteProfile));
     } catch (e) {
       console.warn('Failed to save to localStorage:', e);
+    }
+    // Asynchronously synchronize with PostgreSQL backend if logged in
+    apiSyncProfile(athleteProfile);
+  }
+
+  // --- Backend API Helpers ---
+  function getAuthToken() {
+    return localStorage.getItem(TOKEN_KEY) || null;
+  }
+
+  function getCurrentUser() {
+    try {
+      const u = localStorage.getItem(USER_KEY);
+      return u ? JSON.parse(u) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function mapDbProfileToFrontend(dbRow) {
+    if (!dbRow) return defaultProfile;
+    return {
+      gender: dbRow.gender || 'Male',
+      focusArea: Array.isArray(dbRow.focus_area) ? dbRow.focus_area : ['Chest', 'Arms'],
+      goals: Array.isArray(dbRow.goals) ? dbRow.goals : ['Build Muscle'],
+      motivation: Array.isArray(dbRow.motivation) ? dbRow.motivation : ['Improve Health'],
+      pushupLevel: dbRow.pushup_level || 'Beginner',
+      activityLevel: dbRow.activity_level || 'Moderately Active',
+      weeklyTrainingDays: dbRow.weekly_training_days || 3,
+      firstDay: dbRow.first_day || 'Monday',
+      weight: dbRow.weight ? parseFloat(dbRow.weight) : 68,
+      weightUnit: dbRow.weight_unit || 'KG',
+      height: dbRow.height ? parseFloat(dbRow.height) : 175,
+      heightUnit: dbRow.height_unit || 'CM',
+      avatarUrl: dbRow.avatar_url || 'assets/male.png',
+      customImage: dbRow.custom_image || null,
+      streak: dbRow.streak !== undefined ? parseInt(dbRow.streak, 10) : 0,
+      completedWorkouts: dbRow.completed_workouts !== undefined ? parseInt(dbRow.completed_workouts, 10) : 0,
+      totalTargetWorkouts: dbRow.total_target_workouts !== undefined ? parseInt(dbRow.total_target_workouts, 10) : 12,
+      consistency: dbRow.consistency !== undefined ? parseInt(dbRow.consistency, 10) : 0,
+      feedbackGiven: Boolean(dbRow.feedback_given)
+    };
+  }
+
+  async function apiSyncProfile(profile) {
+    const token = getAuthToken();
+    if (!token) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/profile`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          gender: profile.gender,
+          focusArea: profile.focusArea,
+          goals: profile.goals,
+          motivation: profile.motivation,
+          pushupLevel: profile.pushupLevel,
+          activityLevel: profile.activityLevel,
+          weeklyTrainingDays: profile.weeklyTrainingDays,
+          firstDay: profile.firstDay,
+          weight: profile.weight,
+          weightUnit: profile.weightUnit,
+          height: profile.height,
+          heightUnit: profile.heightUnit,
+          avatarUrl: profile.avatarUrl,
+          customImage: profile.customImage,
+          streak: profile.streak,
+          completedWorkouts: profile.completedWorkouts,
+          totalTargetWorkouts: profile.totalTargetWorkouts,
+          consistency: profile.consistency,
+          feedbackGiven: profile.feedbackGiven
+        })
+      });
+      if (res.ok) {
+        console.log('[Backend Sync] Profile synchronized to PostgreSQL.');
+      }
+    } catch (err) {
+      console.warn('[Backend Sync] Cloud sync skipped (offline or unreachable):', err.message);
+    }
+  }
+
+  async function apiFetchProfileFromCloud() {
+    const token = getAuthToken();
+    if (!token) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/profile`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.data && json.data.profile) {
+          athleteProfile = mapDbProfileToFrontend(json.data.profile);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(athleteProfile));
+          renderDashboard();
+          showToast('Profile synced from PostgreSQL cloud!', 'success');
+        }
+      }
+    } catch (err) {
+      console.warn('[Backend Sync] Could not fetch profile from server:', err.message);
+    }
+  }
+
+  async function apiLogWorkout(workoutData) {
+    const token = getAuthToken();
+    if (!token) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/workouts`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(workoutData)
+      });
+      if (res.ok) {
+        console.log('[Backend] Workout session saved to PostgreSQL.');
+      }
+    } catch (err) {
+      console.warn('[Backend] Could not log workout to server:', err.message);
+    }
+  }
+
+  async function apiSubmitFeedback(feedbackData) {
+    const token = getAuthToken();
+    if (!token) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/feedback`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(feedbackData)
+      });
+      if (res.ok) {
+        console.log('[Backend] Feedback submitted to PostgreSQL.');
+      }
+    } catch (err) {
+      console.warn('[Backend] Could not submit feedback to server:', err.message);
     }
   }
 
@@ -1074,6 +1224,16 @@ document.addEventListener('DOMContentLoaded', () => {
     saveProfile();
     renderDashboard();
 
+    // Save workout session to PostgreSQL backend
+    const currentEx = activeWorkoutExercises[currentExIndex] || activeWorkoutExercises[0];
+    apiLogWorkout({
+      routineName: currentEx ? `${currentEx.title} Routine` : 'Daily Training Session',
+      durationSeconds: 240,
+      exercisesCompleted: activeWorkoutExercises.length,
+      totalExercises: activeWorkoutExercises.length,
+      notes: 'Completed all training sets successfully.'
+    });
+
     showToast('Workout Completed! Superb dedication!', 'success');
 
     // Open Feedback Modal
@@ -1173,6 +1333,13 @@ document.addEventListener('DOMContentLoaded', () => {
       athleteProfile.feedbackGiven = true;
       saveProfile();
 
+      // Submit feedback to PostgreSQL backend
+      apiSubmitFeedback({
+        rating: selectedRating,
+        isSuitable: isSuitable,
+        comment: comment
+      });
+
       AudioEngine.playSuccess();
       if (feedbackFormView) feedbackFormView.style.display = 'none';
       if (feedbackSuccessBox) feedbackSuccessBox.classList.add('active');
@@ -1187,15 +1354,252 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =========================================================================
-  // 10. Profile Reset & Utility Controls (Step 21 & 23)
+  // 10. Authentication & Cloud Sync Modal Handling
+  // =========================================================================
+  const authModal = document.getElementById('authModal');
+  const navAuthBtn = document.getElementById('navAuthBtn');
+  const navAuthBtnText = document.getElementById('navAuthBtnText');
+  const mobileAuthBtn = document.getElementById('mobileAuthBtn');
+  const mobileAuthBtnText = document.getElementById('mobileAuthBtnText');
+  const authModalCloseBtn = document.getElementById('authModalCloseBtn');
+
+  const authTabLogin = document.getElementById('authTabLogin');
+  const authTabSignup = document.getElementById('authTabSignup');
+  const authLoginForm = document.getElementById('authLoginForm');
+  const authSignupForm = document.getElementById('authSignupForm');
+  const authUnauthenticatedView = document.getElementById('authUnauthenticatedView');
+  const authAuthenticatedView = document.getElementById('authAuthenticatedView');
+
+  const loginEmailInput = document.getElementById('loginEmailInput');
+  const loginPasswordInput = document.getElementById('loginPasswordInput');
+  const loginErrorMsg = document.getElementById('loginErrorMsg');
+
+  const signupNameInput = document.getElementById('signupNameInput');
+  const signupEmailInput = document.getElementById('signupEmailInput');
+  const signupPasswordInput = document.getElementById('signupPasswordInput');
+  const signupErrorMsg = document.getElementById('signupErrorMsg');
+
+  const authUserName = document.getElementById('authUserName');
+  const authUserEmail = document.getElementById('authUserEmail');
+  const authSyncBtn = document.getElementById('authSyncBtn');
+  const authLogoutBtn = document.getElementById('authLogoutBtn');
+
+  function openAuthModal() {
+    updateAuthModalView();
+    if (authModal) {
+      authModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function closeAuthModal() {
+    if (authModal) {
+      authModal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  }
+
+  function updateAuthUI() {
+    const user = getCurrentUser();
+    const token = getAuthToken();
+
+    if (token && user) {
+      const displayName = user.full_name || user.email.split('@')[0];
+      if (navAuthBtnText) navAuthBtnText.textContent = displayName;
+      if (mobileAuthBtnText) mobileAuthBtnText.textContent = `Account (${displayName})`;
+    } else {
+      if (navAuthBtnText) navAuthBtnText.textContent = 'Account';
+      if (mobileAuthBtnText) mobileAuthBtnText.textContent = 'Account / Login';
+    }
+  }
+
+  function updateAuthModalView() {
+    const user = getCurrentUser();
+    const token = getAuthToken();
+
+    if (token && user) {
+      if (authUnauthenticatedView) authUnauthenticatedView.style.display = 'none';
+      if (authAuthenticatedView) authAuthenticatedView.style.display = 'block';
+      if (authUserName) authUserName.textContent = user.full_name || 'Athlete';
+      if (authUserEmail) authUserEmail.textContent = user.email || '';
+    } else {
+      if (authUnauthenticatedView) authUnauthenticatedView.style.display = 'block';
+      if (authAuthenticatedView) authAuthenticatedView.style.display = 'none';
+    }
+  }
+
+  if (navAuthBtn) navAuthBtn.addEventListener('click', openAuthModal);
+  if (mobileAuthBtn) {
+    mobileAuthBtn.addEventListener('click', () => {
+      toggleMobileMenu(false);
+      openAuthModal();
+    });
+  }
+  if (authModalCloseBtn) authModalCloseBtn.addEventListener('click', closeAuthModal);
+
+  if (authTabLogin && authTabSignup) {
+    authTabLogin.addEventListener('click', () => {
+      authTabLogin.style.background = 'var(--blue-600)';
+      authTabLogin.style.color = '#fff';
+      authTabSignup.style.background = 'transparent';
+      authTabSignup.style.color = '#94a3b8';
+      if (authLoginForm) authLoginForm.style.display = 'flex';
+      if (authSignupForm) authSignupForm.style.display = 'none';
+    });
+
+    authTabSignup.addEventListener('click', () => {
+      authTabSignup.style.background = 'var(--blue-600)';
+      authTabSignup.style.color = '#fff';
+      authTabLogin.style.background = 'transparent';
+      authTabLogin.style.color = '#94a3b8';
+      if (authSignupForm) authSignupForm.style.display = 'flex';
+      if (authLoginForm) authLoginForm.style.display = 'none';
+    });
+  }
+
+  // --- Handle Login Form Submission ---
+  if (authLoginForm) {
+    authLoginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (loginErrorMsg) loginErrorMsg.style.display = 'none';
+
+      const email = loginEmailInput.value.trim();
+      const password = loginPasswordInput.value;
+
+      try {
+        const submitBtn = authLoginForm.querySelector('button[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
+
+        const res = await fetch(`${API_BASE}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await res.json();
+        if (submitBtn) submitBtn.disabled = false;
+
+        if (!res.ok || !data.success) {
+          if (loginErrorMsg) {
+            loginErrorMsg.textContent = data.message || 'Login failed. Please verify credentials.';
+            loginErrorMsg.style.display = 'block';
+          }
+          return;
+        }
+
+        // Save token and user info
+        localStorage.setItem(TOKEN_KEY, data.data.token);
+        localStorage.setItem(USER_KEY, JSON.stringify(data.data.user));
+
+        updateAuthUI();
+        updateAuthModalView();
+        showToast(`Welcome back, ${data.data.user.full_name || 'Athlete'}!`, 'success');
+
+        // Fetch user's profile from cloud
+        await apiFetchProfileFromCloud();
+        closeAuthModal();
+      } catch (err) {
+        if (loginErrorMsg) {
+          loginErrorMsg.textContent = 'Unable to connect to backend server. Check connection.';
+          loginErrorMsg.style.display = 'block';
+        }
+      }
+    });
+  }
+
+  // --- Handle Signup Form Submission ---
+  if (authSignupForm) {
+    authSignupForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (signupErrorMsg) signupErrorMsg.style.display = 'none';
+
+      const fullName = signupNameInput ? signupNameInput.value.trim() : '';
+      const email = signupEmailInput.value.trim();
+      const password = signupPasswordInput.value;
+
+      try {
+        const submitBtn = authSignupForm.querySelector('button[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
+
+        const res = await fetch(`${API_BASE}/auth/signup`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, full_name: fullName })
+        });
+
+        const data = await res.json();
+        if (submitBtn) submitBtn.disabled = false;
+
+        if (!res.ok || !data.success) {
+          if (signupErrorMsg) {
+            signupErrorMsg.textContent = data.message || 'Sign up failed.';
+            signupErrorMsg.style.display = 'block';
+          }
+          return;
+        }
+
+        // Save token and user info
+        localStorage.setItem(TOKEN_KEY, data.data.token);
+        localStorage.setItem(USER_KEY, JSON.stringify(data.data.user));
+
+        // Sync currently configured local assessment to the new account
+        await apiSyncProfile(athleteProfile);
+
+        updateAuthUI();
+        updateAuthModalView();
+        showToast('Account created and profile saved to cloud!', 'success');
+        closeAuthModal();
+      } catch (err) {
+        if (signupErrorMsg) {
+          signupErrorMsg.textContent = 'Unable to connect to backend server. Check connection.';
+          signupErrorMsg.style.display = 'block';
+        }
+      }
+    });
+  }
+
+  // --- Handle Logout ---
+  if (authLogoutBtn) {
+    authLogoutBtn.addEventListener('click', () => {
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(USER_KEY);
+      updateAuthUI();
+      updateAuthModalView();
+      showToast('Logged out successfully.', 'info');
+      closeAuthModal();
+    });
+  }
+
+  // --- Handle Manual Cloud Sync ---
+  if (authSyncBtn) {
+    authSyncBtn.addEventListener('click', async () => {
+      await apiSyncProfile(athleteProfile);
+      showToast('Profile synchronized with PostgreSQL!', 'success');
+    });
+  }
+
+  // =========================================================================
+  // 11. Profile Reset & Utility Controls (Step 21 & 23)
   // =========================================================================
   const dashResetProfileBtn = document.getElementById('dashResetProfileBtn');
   if (dashResetProfileBtn) {
-    dashResetProfileBtn.addEventListener('click', () => {
+    dashResetProfileBtn.addEventListener('click', async () => {
       if (confirm('Are you sure you want to reset your profile and stored workout metrics?')) {
         localStorage.removeItem(STORAGE_KEY);
         athleteProfile = { ...defaultProfile };
         saveProfile();
+        
+        // Reset on server if authenticated
+        const token = getAuthToken();
+        if (token) {
+          try {
+            await fetch(`${API_BASE}/profile/reset`, {
+              method: 'POST',
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+          } catch (e) {}
+        }
+
         renderDashboard();
         showToast('Profile reset to default state.', 'success');
         location.reload();
@@ -1225,8 +1629,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Initial load check: if user already has saved data in localStorage, render dashboard
+  // Initial load check: if user already has saved data or is logged in
+  updateAuthUI();
+  if (getAuthToken()) {
+    apiFetchProfileFromCloud();
+  }
   renderDashboard();
+
   const savedData = localStorage.getItem(STORAGE_KEY);
   if (savedData) {
     // Show "My Plan" in navbar
