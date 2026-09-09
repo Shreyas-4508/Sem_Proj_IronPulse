@@ -1,12 +1,17 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-// Initialize PostgreSQL connection pool
-// Supports either full connection string (DATABASE_URL) or individual credentials
+// Determine SSL configuration
+let sslOption = false;
+if (process.env.DB_SSL === 'true' || (process.env.DATABASE_URL && process.env.DB_SSL !== 'false')) {
+  sslOption = { rejectUnauthorized: false };
+}
+
+// PostgreSQL Connection Pool
 const poolConfig = process.env.DATABASE_URL
   ? {
       connectionString: process.env.DATABASE_URL,
-      ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false
+      ssl: sslOption
     }
   : {
       host: process.env.DB_HOST || 'localhost',
@@ -14,7 +19,7 @@ const poolConfig = process.env.DATABASE_URL
       user: process.env.DB_USER || 'postgres',
       password: process.env.DB_PASSWORD || 'postgres',
       database: process.env.DB_NAME || 'ironpulse_db',
-      ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false
+      ssl: sslOption
     };
 
 const pool = new Pool(poolConfig);
@@ -24,7 +29,7 @@ pool.on('connect', () => {
 });
 
 pool.on('error', (err) => {
-  console.error('[Database] Unexpected error on idle PostgreSQL client:', err);
+  console.error('[Database] Unexpected error on idle PostgreSQL client:', err.message);
 });
 
 /**

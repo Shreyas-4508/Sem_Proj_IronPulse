@@ -7,14 +7,17 @@ document.addEventListener('DOMContentLoaded', () => {
   'use strict';
 
   // =========================================================================
-  // 1. Initial State, Storage & Backend API Client
+  // 1. API Configuration & PostgreSQL State Management
   // =========================================================================
-  const STORAGE_KEY = 'ironpulse_athlete_profile';
+  
+  // Replace YOUR_PRODUCTION_BACKEND_URL with your deployed Render backend URL
+  // e.g., 'https://ironpulse-api.onrender.com/api'
+  const API_BASE_URL =
+    window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? 'http://localhost:5000/api'
+      : 'https://YOUR_PRODUCTION_BACKEND_URL.onrender.com/api';
+
   const TOKEN_KEY = 'ironpulse_jwt_token';
-  const USER_KEY = 'ironpulse_user_info';
-  const API_BASE = window.location.port === '5000' || window.location.pathname.startsWith('/api')
-    ? '/api'
-    : 'http://localhost:5000/api';
 
   const defaultProfile = {
     gender: 'Male',
@@ -31,49 +34,25 @@ document.addEventListener('DOMContentLoaded', () => {
     heightUnit: 'CM',
     avatarUrl: 'assets/male.png',
     customImage: null,
-    streak: 5,
-    completedWorkouts: 8,
+    streak: 0,
+    completedWorkouts: 0,
     totalTargetWorkouts: 12,
-    consistency: 78,
+    consistency: 0,
     feedbackGiven: false
   };
 
-  let athleteProfile = loadProfile();
-
-  function loadProfile() {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        return { ...defaultProfile, ...JSON.parse(saved) };
-      }
-    } catch (e) {
-      console.warn('LocalStorage error:', e);
-    }
-    return { ...defaultProfile };
-  }
+  // In-memory application state (PostgreSQL is the single source of truth)
+  let athleteProfile = { ...defaultProfile };
+  let currentUser = null;
 
   function saveProfile() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(athleteProfile));
-    } catch (e) {
-      console.warn('Failed to save to localStorage:', e);
-    }
-    // Asynchronously synchronize with PostgreSQL backend if logged in
+    // Synchronize athlete profile to PostgreSQL backend if authenticated
     apiSyncProfile(athleteProfile);
   }
 
   // --- Backend API Helpers ---
   function getAuthToken() {
     return localStorage.getItem(TOKEN_KEY) || null;
-  }
-
-  function getCurrentUser() {
-    try {
-      const u = localStorage.getItem(USER_KEY);
-      return u ? JSON.parse(u) : null;
-    } catch (e) {
-      return null;
-    }
   }
 
   function mapDbProfileToFrontend(dbRow) {
@@ -106,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!token) return;
 
     try {
-      const res = await fetch(`${API_BASE}/profile`, {
+      const res = await fetch(`${API_BASE_URL}/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -135,32 +114,75 @@ document.addEventListener('DOMContentLoaded', () => {
         })
       });
       if (res.ok) {
-        console.log('[Backend Sync] Profile synchronized to PostgreSQL.');
+        console.log('[Backend Sync] Profile saved to PostgreSQL database.');
+      } else if (res.status === 401) {
+        localStorage.removeItem(TOKEN_KEY);
+        updateAuthUI();
       }
     } catch (err) {
-      console.warn('[Backend Sync] Cloud sync skipped (offline or unreachable):', err.message);
+      console.warn('[Backend Sync] Cloud sync skipped (offline):', err.message);
     }
   }
 
-  async function apiFetchProfileFromCloud() {
+  async function validateAndLoadUserSession() {
     const token = getAuthToken();
-    if (!token) return;
+    if (!token) {
+      updateAuthUI();
+      return;
+    }
 
     try {
-      const res = await fetch(`${API_BASE}/profile`, {
+      // 1. Fetch user's profile from PostgreSQL
+      const profileRes = await fetch(`${API_BASE_URL}/profile`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      if (res.ok) {
-        const json = await res.json();
+
+      if (profileRes.status === 401 || profileRes.status === 403) {
+        localStorage.removeItem(TOKEN_KEY);
+        currentUser = null;
+        updateAuthUI();
+        showToast('Your session has expired. Please log in again.', 'warning');
+        return;
+      }
+
+      if (profileRes.ok) {
+        const json = await profileRes.json();
         if (json.success && json.data && json.data.profile) {
           athleteProfile = mapDbProfileToFrontend(json.data.profile);
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(athleteProfile));
-          renderDashboard();
-          showToast('Profile synced from PostgreSQL cloud!', 'success');
         }
       }
+
+      // 2. Fetch authenticated account info
+      const meRes = await fetch(`${API_BASE_URL}/auth/me`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (meRes.ok) {
+        const meJson = await meRes.json();
+        if (meJson.success && meJson.data && meJson.data.user) {
+          currentUser = meJson.data.user;
+        }
+      }
+
+      // 3. Fetch workout session stats from PostgreSQL
+      const workoutsRes = await fetch(`${API_BASE_URL}/workouts`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (workoutsRes.ok) {
+        const wJson = await workoutsRes.json();
+        if (wJson.success && wJson.data && wJson.data.stats) {
+          if (wJson.data.stats.totalSessions !== undefined) {
+            athleteProfile.completedWorkouts = wJson.data.stats.totalSessions;
+          }
+        }
+      }
+
+      updateAuthUI();
+      renderDashboard();
+      if (navDashboardLink) navDashboardLink.style.display = 'inline-block';
+      if (mobileDashboardLink) mobileDashboardLink.style.display = 'block';
     } catch (err) {
-      console.warn('[Backend Sync] Could not fetch profile from server:', err.message);
+      console.warn('[Session Load] Backend currently unreachable:', err.message);
+      updateAuthUI();
     }
   }
 
@@ -169,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!token) return;
 
     try {
-      const res = await fetch(`${API_BASE}/workouts`, {
+      const res = await fetch(`${API_BASE_URL}/workouts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -178,7 +200,17 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify(workoutData)
       });
       if (res.ok) {
-        console.log('[Backend] Workout session saved to PostgreSQL.');
+        const json = await res.json();
+        if (json.success && json.data && json.data.profileProgress) {
+          athleteProfile.streak = json.data.profileProgress.streak;
+          athleteProfile.completedWorkouts = json.data.profileProgress.completed_workouts;
+          athleteProfile.consistency = json.data.profileProgress.consistency;
+          renderDashboard();
+        }
+        console.log('[Backend] Workout session recorded in PostgreSQL.');
+      } else if (res.status === 401) {
+        localStorage.removeItem(TOKEN_KEY);
+        updateAuthUI();
       }
     } catch (err) {
       console.warn('[Backend] Could not log workout to server:', err.message);
@@ -190,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!token) return;
 
     try {
-      const res = await fetch(`${API_BASE}/feedback`, {
+      const res = await fetch(`${API_BASE_URL}/feedback`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -200,6 +232,9 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       if (res.ok) {
         console.log('[Backend] Feedback submitted to PostgreSQL.');
+      } else if (res.status === 401) {
+        localStorage.removeItem(TOKEN_KEY);
+        updateAuthUI();
       }
     } catch (err) {
       console.warn('[Backend] Could not submit feedback to server:', err.message);
@@ -1400,13 +1435,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateAuthUI() {
-    const user = getCurrentUser();
     const token = getAuthToken();
 
-    if (token && user) {
-      const displayName = user.full_name || user.email.split('@')[0];
+    if (token && currentUser) {
+      const displayName = currentUser.full_name || currentUser.email.split('@')[0];
       if (navAuthBtnText) navAuthBtnText.textContent = displayName;
       if (mobileAuthBtnText) mobileAuthBtnText.textContent = `Account (${displayName})`;
+    } else if (token) {
+      if (navAuthBtnText) navAuthBtnText.textContent = 'My Account';
+      if (mobileAuthBtnText) mobileAuthBtnText.textContent = 'My Account';
     } else {
       if (navAuthBtnText) navAuthBtnText.textContent = 'Account';
       if (mobileAuthBtnText) mobileAuthBtnText.textContent = 'Account / Login';
@@ -1414,14 +1451,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateAuthModalView() {
-    const user = getCurrentUser();
     const token = getAuthToken();
 
-    if (token && user) {
+    if (token) {
       if (authUnauthenticatedView) authUnauthenticatedView.style.display = 'none';
       if (authAuthenticatedView) authAuthenticatedView.style.display = 'block';
-      if (authUserName) authUserName.textContent = user.full_name || 'Athlete';
-      if (authUserEmail) authUserEmail.textContent = user.email || '';
+      if (authUserName) authUserName.textContent = currentUser ? (currentUser.full_name || 'Athlete') : 'Athlete';
+      if (authUserEmail) authUserEmail.textContent = currentUser ? currentUser.email : '';
     } else {
       if (authUnauthenticatedView) authUnauthenticatedView.style.display = 'block';
       if (authAuthenticatedView) authAuthenticatedView.style.display = 'none';
@@ -1470,7 +1506,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const submitBtn = authLoginForm.querySelector('button[type="submit"]');
         if (submitBtn) submitBtn.disabled = true;
 
-        const res = await fetch(`${API_BASE}/auth/login`, {
+        const res = await fetch(`${API_BASE_URL}/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password })
@@ -1487,20 +1523,18 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
 
-        // Save token and user info
+        // Save JWT token in browser for session authentication
         localStorage.setItem(TOKEN_KEY, data.data.token);
-        localStorage.setItem(USER_KEY, JSON.stringify(data.data.user));
+        currentUser = data.data.user;
 
-        updateAuthUI();
-        updateAuthModalView();
+        // Fetch user's profile and workout data from PostgreSQL
+        await validateAndLoadUserSession();
+        
         showToast(`Welcome back, ${data.data.user.full_name || 'Athlete'}!`, 'success');
-
-        // Fetch user's profile from cloud
-        await apiFetchProfileFromCloud();
         closeAuthModal();
       } catch (err) {
         if (loginErrorMsg) {
-          loginErrorMsg.textContent = 'Unable to connect to backend server. Check connection.';
+          loginErrorMsg.textContent = 'Unable to connect to backend server. Please verify your connection.';
           loginErrorMsg.style.display = 'block';
         }
       }
@@ -1521,7 +1555,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const submitBtn = authSignupForm.querySelector('button[type="submit"]');
         if (submitBtn) submitBtn.disabled = true;
 
-        const res = await fetch(`${API_BASE}/auth/signup`, {
+        const res = await fetch(`${API_BASE_URL}/auth/signup`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password, full_name: fullName })
@@ -1538,20 +1572,19 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
 
-        // Save token and user info
+        // Save JWT token in browser for session authentication
         localStorage.setItem(TOKEN_KEY, data.data.token);
-        localStorage.setItem(USER_KEY, JSON.stringify(data.data.user));
+        currentUser = data.data.user;
 
-        // Sync currently configured local assessment to the new account
+        // Sync currently configured in-memory assessment directly to PostgreSQL
         await apiSyncProfile(athleteProfile);
+        await validateAndLoadUserSession();
 
-        updateAuthUI();
-        updateAuthModalView();
-        showToast('Account created and profile saved to cloud!', 'success');
+        showToast('Account created and fitness profile saved to cloud!', 'success');
         closeAuthModal();
       } catch (err) {
         if (signupErrorMsg) {
-          signupErrorMsg.textContent = 'Unable to connect to backend server. Check connection.';
+          signupErrorMsg.textContent = 'Unable to connect to backend server. Please verify your connection.';
           signupErrorMsg.style.display = 'block';
         }
       }
@@ -1562,9 +1595,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (authLogoutBtn) {
     authLogoutBtn.addEventListener('click', () => {
       localStorage.removeItem(TOKEN_KEY);
-      localStorage.removeItem(USER_KEY);
+      currentUser = null;
+      athleteProfile = { ...defaultProfile };
       updateAuthUI();
       updateAuthModalView();
+      renderDashboard();
+      if (navDashboardLink) navDashboardLink.style.display = 'none';
+      if (mobileDashboardLink) mobileDashboardLink.style.display = 'none';
       showToast('Logged out successfully.', 'info');
       closeAuthModal();
     });
@@ -1574,7 +1611,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (authSyncBtn) {
     authSyncBtn.addEventListener('click', async () => {
       await apiSyncProfile(athleteProfile);
-      showToast('Profile synchronized with PostgreSQL!', 'success');
+      await validateAndLoadUserSession();
+      showToast('Profile synchronized with PostgreSQL cloud!', 'success');
     });
   }
 
@@ -1584,25 +1622,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const dashResetProfileBtn = document.getElementById('dashResetProfileBtn');
   if (dashResetProfileBtn) {
     dashResetProfileBtn.addEventListener('click', async () => {
-      if (confirm('Are you sure you want to reset your profile and stored workout metrics?')) {
-        localStorage.removeItem(STORAGE_KEY);
+      if (confirm('Are you sure you want to reset your profile and stored workout metrics in PostgreSQL?')) {
         athleteProfile = { ...defaultProfile };
-        saveProfile();
         
-        // Reset on server if authenticated
+        // Reset in PostgreSQL database if authenticated
         const token = getAuthToken();
         if (token) {
           try {
-            await fetch(`${API_BASE}/profile/reset`, {
+            await fetch(`${API_BASE_URL}/profile/reset`, {
               method: 'POST',
               headers: { 'Authorization': `Bearer ${token}` }
             });
-          } catch (e) {}
+          } catch (e) {
+            console.warn('[Profile Reset] Could not reset on server:', e.message);
+          }
         }
 
         renderDashboard();
-        showToast('Profile reset to default state.', 'success');
-        location.reload();
+        showToast('Profile reset to default metrics.', 'success');
       }
     });
   }
@@ -1629,17 +1666,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Initial load check: if user already has saved data or is logged in
-  updateAuthUI();
-  if (getAuthToken()) {
-    apiFetchProfileFromCloud();
-  }
+  // Initial application startup: Validate session and load data from PostgreSQL
+  validateAndLoadUserSession();
   renderDashboard();
-
-  const savedData = localStorage.getItem(STORAGE_KEY);
-  if (savedData) {
-    // Show "My Plan" in navbar
-    if (navDashboardLink) navDashboardLink.style.display = 'inline-block';
-    if (mobileDashboardLink) mobileDashboardLink.style.display = 'block';
-  }
 });
