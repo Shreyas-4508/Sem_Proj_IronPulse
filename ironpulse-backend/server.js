@@ -19,7 +19,8 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 // Supports Localhost, Production Vercel Domain & Configurable FRONTEND_URL
 // ============================================================================
 const allowedOrigins = [
-  'https://semprojironpulse.vercel.app',
+  'https://sem-proj-ironpulse.vercel.app',   // Production Vercel frontend
+  'https://semprojironpulse.vercel.app',     // Legacy alias (kept for safety)
   'http://localhost:5000',
   'http://localhost:3000',
   'http://localhost:5500',
