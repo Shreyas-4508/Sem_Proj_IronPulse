@@ -20,3 +20,14 @@ IronPulse is being developed as an academic semester project while applying conc
 **Type:** Semester Project
 **Platform:** Web Application
 **Status:** In Development
+
+## Local and Vercel setup
+
+Create a local `.env` file from `.env.example`, or add the same variables in the Vercel project settings:
+
+```text
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-public-key
+```
+
+Only the Supabase anon/publishable key belongs in frontend environment variables. Do not add a service-role key. Run `supabase-schema.sql` in the Supabase SQL editor before using profile synchronization.

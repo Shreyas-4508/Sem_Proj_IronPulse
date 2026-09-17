@@ -1,0 +1,16 @@
+{
+  "name": "ironpulse-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --host"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.52.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.10"
+  }
+}
