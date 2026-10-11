@@ -1,1 +1,1 @@
-#IronPulse is a Semester Project madde by Second year Data Science students studying at RCPIT Shirpur.
+IronPulse is a Semester Project madde by Second year Data Science students studying at RCPIT Shirpur.
