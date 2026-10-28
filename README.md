@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # IronPulse
 
 > AI-powered home fitness platform built with Python, Streamlit, and PostgreSQL.
@@ -174,3 +175,6 @@ Both platforms support Python + PostgreSQL free tiers.
 **Alembic migration fails:**
 - Ensure `DATABASE_URL` is set before running `alembic upgrade head`
 - For SQLite, `render_as_batch=True` is enabled automatically
+=======
+IronPulse is a Semester Project madde by Second year Data Science students studying at RCPIT Shirpur.
+>>>>>>> b127c25e35f5e3dbc8514e58afe25933a2798ee7
